@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
 
 android {
     compileSdkVersion 21
@@ -19,7 +20,88 @@ android {
     }
 }
 
+group = 'com.tookool'
+version = '1.0.4'
+
+def siteUrl = 'https://github.com/tookool/Android-Library'
+def gitUrl = 'https://github.com/tookool/Android-Library.git'
+
+//TODO get from environment variable through gradle
+bintray {
+    user = bintray_userName
+    key = bintray_key
+    configurations = ['archives'] //When uploading configuration
+    dryRun = false
+    pkg {
+        repo = 'android-library'
+        name = 'sdk'
+        desc = 'Bintray aar publishing example'
+        websiteUrl = siteUrl
+        issueTrackerUrl = 'https://github.com/tookool/Android-Library/issues'
+        vcsUrl = gitUrl
+        licenses = ['Apache-2.0']
+        labels = ['aar', 'android', 'example']
+        publicDownloadNumbers = true
+    }
+}
+
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                name 'sdk'
+                url siteUrl
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'tookool'
+                        name 'Amir P'
+                        email 'aamirp23@gmail.com'
+                    }
+                }
+                scm {
+                    connection siteUrl
+                    developerConnection gitUrl
+                    url siteUrl
+
+                }
+            }
+            artifactId
+        }
+    }
+}
+
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:21.0.3'
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+task findConventions << {
+    println project.getConvention()
 }
