@@ -21,7 +21,7 @@ android {
 }
 
 group = 'com.tookool'
-version = '1.0.4'
+version = '1.0.5'
 
 def siteUrl = 'https://github.com/tookool/Android-Library'
 def gitUrl = 'https://github.com/tookool/Android-Library.git'
@@ -73,7 +73,6 @@ install {
 
                 }
             }
-            artifactId
         }
     }
 }
@@ -104,4 +103,8 @@ artifacts {
 
 task findConventions << {
     println project.getConvention()
+}
+
+task printProjectName << {
+    println rootProject.name
 }
